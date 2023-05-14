@@ -1,8 +1,77 @@
+package com.mycompany.juegoscasino.java;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package com.mycompany.juegoscasino.java;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class JuegosAzar extends JFrame implements ActionListener {
+    private JRadioButton juegoDadosRadioButton;
+    private JRadioButton juegoTragamonedasRadioButton;
+    private JButton jugarButton;
+
+    public JuegosAzar() {
+        super("Juegos de Azar");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+        setLayout(new FlowLayout());
+
+        juegoDadosRadioButton = new JRadioButton("Juego de Dados");
+        juegoTragamonedasRadioButton = new JRadioButton("Tragamonedas");
+
+        ButtonGroup grupoOpciones = new ButtonGroup();
+        grupoOpciones.add(juegoDadosRadioButton);
+        grupoOpciones.add(juegoTragamonedasRadioButton);
+
+        jugarButton = new JButton("Jugar");
+        jugarButton.addActionListener(this);
+
+        add(juegoDadosRadioButton);
+        add(juegoTragamonedasRadioButton);
+        add(jugarButton);
+
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (juegoDadosRadioButton.isSelected()) {
+            jugarDados();
+        } else if (juegoTragamonedasRadioButton.isSelected()) {
+            jugarTragamonedas();
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un juego.");
+        }
+    }
+
+    private void jugarDados() {
+        int resultado = (int) (Math.random() * 6) + 1;
+        JOptionPane.showMessageDialog(this, "Resultado del juego de dados: " + resultado);
+    }
+
+    private void jugarTragamonedas() {
+        int resultado1 = (int) (Math.random() * 10);
+        int resultado2 = (int) (Math.random() * 10);
+        int resultado3 = (int) (Math.random() * 10);
+        JOptionPane.showMessageDialog(this, "Resultados del juego de tragamonedas: " + resultado1 + ", " + resultado2 + ", " + resultado3);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new JuegosAzar();
+            }
+        });
+    }
+}
+
+
+
+/*
 
 import java.util.Scanner;
 
@@ -44,7 +113,7 @@ public class JuegosAzar {
         System.out.println("Resultados del juego de tragamonedas: " + resultado1 + ", " + resultado2 + ", " + resultado3);
     }
 }
-
+*/
 
 /*import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
