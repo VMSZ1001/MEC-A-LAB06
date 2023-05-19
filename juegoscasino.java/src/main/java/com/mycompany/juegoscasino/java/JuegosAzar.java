@@ -10,6 +10,8 @@ public class JuegosAzar extends JFrame implements ActionListener {
     private JRadioButton juegoTragamonedasRadioButton;
     private JButton jugarButton;
     private JButton pausarButton;
+    private ImageIcon imagenDados = new ImageIcon("dados.png");
+    private ImageIcon imagenTragamonedas = new ImageIcon("tragamonedas.png");
     private DadoPanel panelDados1;
     private DadoPanel panelDados2;
     private TragamonedasPanel panelTragamonedas;
@@ -32,14 +34,6 @@ public class JuegosAzar extends JFrame implements ActionListener {
         panelDados1 = new DadoPanel(imagenesDados, 200, 200); // ajusta el tamaño del dado 1
         panelDados2 = new DadoPanel(imagenesDados, 200, 200); // ajusta el tamaño del dado 2
 
-        // crea el panel del tragamonedas con las tiras de imágenes correspondientes
-        ImageIcon[] tirasTragamonedas = {
-                new ImageIcon("tira1.png"),
-                new ImageIcon("tira2.png"),
-                new ImageIcon("tira3.png")
-        };
-        panelTragamonedas = new TragamonedasPanel(tirasTragamonedas, 200, 200); // ajusta el tamaño del tragamonedas
-
         JPanel panelDados = new JPanel();
         panelDados.setLayout(new FlowLayout());
         juegoDadosRadioButton = new JRadioButton("Juego de Dados");
@@ -47,11 +41,19 @@ public class JuegosAzar extends JFrame implements ActionListener {
         panelDados.add(panelDados1); // agrega el panel del dado 1
         panelDados.add(panelDados2); // agrega el panel del dado 2
 
+        // crea el panel del tragamonedas
+        ImageIcon[] imagenesTragamonedas = {
+                new ImageIcon("tira1.png"),
+                new ImageIcon("tira2.png"),
+                new ImageIcon("tira3.png"),
+        };
+        panelTragamonedas = new TragamonedasPanel(imagenesTragamonedas, 200, 200); // ajusta el tamaño del tragamonedas
+
         JPanel panelTragamonedas = new JPanel();
         panelTragamonedas.setLayout(new FlowLayout());
         juegoTragamonedasRadioButton = new JRadioButton("Tragamonedas");
         panelTragamonedas.add(juegoTragamonedasRadioButton);
-        panelTragamonedas.add(panelTragamonedas); // agrega el panel del tragamonedas
+        panelTragamonedas.add(panelTragamonedas);
 
         ButtonGroup grupoOpciones = new ButtonGroup();
         grupoOpciones.add(juegoDadosRadioButton);
@@ -74,9 +76,10 @@ public class JuegosAzar extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == jugarButton) {
             if (juegoDadosRadioButton.isSelected()) {
-                jugarDados();
+                panelDados1.lanzarConRetrasoAleatorio();
+                panelDados2.lanzarConRetrasoAleatorio();
             } else if (juegoTragamonedasRadioButton.isSelected()) {
-                jugarTragamonedas();
+                panelTragamonedas.lanzarConRetrasoAleatorio();
             } else {
                 JOptionPane.showMessageDialog(this, "Por favor, seleccione un juego.");
             }
@@ -85,17 +88,6 @@ public class JuegosAzar extends JFrame implements ActionListener {
             panelDados2.pausar();
             panelTragamonedas.pausar();
         }
-    }
-
-    private void jugarDados() {
-        panelDados1.lanzarConRetrasoAleatorio();
-        panelDados2.lanzarConRetrasoAleatorio();
-        // Resto del código...
-    }
-
-    private void jugarTragamonedas() {
-        panelTragamonedas.lanzarConRetrasoAleatorio();
-        // Resto del código...
     }
 
     public static void main(String[] args) {
@@ -154,18 +146,22 @@ class TragamonedasPanel extends JPanel implements ActionListener {
     public TragamonedasPanel(ImageIcon[] tiras, int ancho, int alto) {
         this.tiras = tiras;
         this.tiraActual = 0;
-        this.timer = new Timer(100, this); // actualiza cada 100 milisegundos
+        this.timer = new Timer(200, this); // actualiza cada 200 milisegundos
         setPreferredSize(new Dimension(ancho, alto)); // ajusta el tamaño del panel
-        this.retrasosIniciales = new int[tiras.length];
+
+        // genera retrasos iniciales aleatorios para cada tira
+        retrasosIniciales = new int[tiras.length];
         for (int i = 0; i < retrasosIniciales.length; i++) {
-            retrasosIniciales[i] = (int) (Math.random() * 1000); // establece un retraso inicial aleatorio para cada tira
+            retrasosIniciales[i] = (int) (Math.random() * 1000);
         }
     }
 
     public void lanzarConRetrasoAleatorio() {
         tiraActual = 0; // reinicia la tira actual
-        timer.setInitialDelay(retrasosIniciales[tiraActual]); // establece el retraso inicial aleatorio
-        timer.start(); // inicia la animación
+        for (int i = 0; i < retrasosIniciales.length; i++) {
+            timer.setInitialDelay(retrasosIniciales[i]); // establece el retraso inicial aleatorio para cada tira
+            timer.start(); // inicia la animación
+        }
     }
 
     public void pausar() {
@@ -177,20 +173,15 @@ class TragamonedasPanel extends JPanel implements ActionListener {
         if (tiraActual >= tiras.length) {
             tiraActual = 0; // vuelve al inicio si llega al final
         }
-        timer.setInitialDelay(retrasosIniciales[tiraActual]); // establece el retraso inicial aleatorio para la siguiente tira
         repaint(); // repinta el panel
     }
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int imageHeight = getHeight() / tiras.length; // altura de cada imagen en la tira
-        int y = -tiraActual * imageHeight; // posición vertical inicial de la tira
-        for (int i = 0; i < tiras.length; i++) {
-            g.drawImage(tiras[i].getImage(), 0, y, getWidth(), y + imageHeight, null);
-            y += imageHeight; // incrementa la posición vertical para la siguiente imagen
-        }
+        g.drawImage(tiras[tiraActual].getImage(), 0, 0, getWidth(), getHeight(), null);
     }
 }
+
 
 /*package com.mycompany.juegoscasino.java;
 
